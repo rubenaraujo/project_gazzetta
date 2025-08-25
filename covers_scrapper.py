@@ -15,12 +15,10 @@ CATEGORIES = {
     "RevistasModa": "https://capasjornais.pt/capas/RevistasModa.html",
 }
 
-def corsproxy_url(url):
-    return f"https://corsproxy.io/?{url}"
-
 def get_full_image(url):
     """Goes to the individual cover page and returns the link to the high-res image"""
-    resp = requests.get(corsproxy_url(url))
+    proxy_url = f"https://corsproxy.ruben-araujo.workers.dev/corsproxy/?apiurl={url}"
+    resp = requests.get(proxy_url)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
     img = soup.find("img", class_="img-fluid")
@@ -32,7 +30,8 @@ def get_full_image(url):
     return None
 
 def fetch_covers(category, url):
-    resp = requests.get(corsproxy_url(url))
+    proxy_url = f"https://corsproxy.ruben-araujo.workers.dev/corsproxy/?apiurl={url}"
+    resp = requests.get(proxy_url)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -84,7 +83,8 @@ def download_images(covers, category, base_dir="images"):
         if not os.path.exists(local_path):
             return True  # File does not exist, download
         try:
-            head = requests.head(remote_url, timeout=10)
+            proxy_url = f"https://corsproxy.ruben-araujo.workers.dev/corsproxy/?apiurl={remote_url}"
+            head = requests.head(proxy_url, timeout=10)
             if head.status_code != 200:
                 return False  # Can't check, skip
             last_mod = head.headers.get("Last-Modified")
@@ -108,7 +108,8 @@ def download_images(covers, category, base_dir="images"):
             full_path = os.path.join(full_dir, fname)
             if should_download(cover['image_url'], full_path):
                 try:
-                    r = requests.get(cover['image_url'])
+                    proxy_url = f"https://corsproxy.ruben-araujo.workers.dev/corsproxy/?apiurl={cover['image_url']}"
+                    r = requests.get(proxy_url)
                     r.raise_for_status()
                     with open(full_path, "wb") as f:
                         f.write(r.content)
@@ -123,7 +124,8 @@ def download_images(covers, category, base_dir="images"):
             thumb_path = os.path.join(thumb_dir, fname)
             if should_download(cover['thumb_url'], thumb_path):
                 try:
-                    r = requests.get(cover['thumb_url'])
+                    proxy_url = f"https://corsproxy.ruben-araujo.workers.dev/corsproxy/?apiurl={cover['thumb_url']}"
+                    r = requests.get(proxy_url)
                     r.raise_for_status()
                     with open(thumb_path, "wb") as f:
                         f.write(r.content)
