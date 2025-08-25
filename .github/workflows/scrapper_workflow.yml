@@ -30,7 +30,7 @@ jobs:
 
       - name: Commit and push images
         run: |
-          git add path/to/images/*
+          git add images/covers/* images/thumbnails/*
           git diff --cached --quiet || git commit -m "Add/update images from covers_scrapper.py"
           git push
 
