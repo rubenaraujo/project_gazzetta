@@ -1,0 +1,27 @@
+name: Run Covers Scrapper
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-covers-scrapper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || pip install -r scripts_not_versioned/requirements.txt
+
+      - name: Run covers_scrapper.py
+        run: python scripts_not_versioned/covers_scrapper.py
+
