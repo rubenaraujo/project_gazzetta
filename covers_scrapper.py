@@ -15,9 +15,12 @@ CATEGORIES = {
     "RevistasModa": "https://capasjornais.pt/capas/RevistasModa.html",
 }
 
+def corsproxy_url(url):
+    return f"https://corsproxy.io/?{url}"
+
 def get_full_image(url):
     """Goes to the individual cover page and returns the link to the high-res image"""
-    resp = requests.get(url)
+    resp = requests.get(corsproxy_url(url))
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
     img = soup.find("img", class_="img-fluid")
@@ -29,7 +32,7 @@ def get_full_image(url):
     return None
 
 def fetch_covers(category, url):
-    resp = requests.get(url)
+    resp = requests.get(corsproxy_url(url))
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
