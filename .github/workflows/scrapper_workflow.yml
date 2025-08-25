@@ -19,9 +19,8 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt || pip install -r scripts_not_versioned/requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run covers_scrapper.py
-        run: python scripts_not_versioned/covers_scrapper.py
+        run: python covers_scrapper.py
 
