@@ -2,8 +2,7 @@ name: Run Covers Scrapper
 
 on:
   schedule:
-    - cron: '0 5 * * *'
-    - cron: '0 8 * * *'
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -23,4 +22,15 @@ jobs:
 
       - name: Run covers_scrapper.py
         run: python covers_scrapper.py
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push images
+        run: |
+          git add path/to/images/*
+          git diff --cached --quiet || git commit -m "Add/update images from covers_scrapper.py"
+          git push
 
