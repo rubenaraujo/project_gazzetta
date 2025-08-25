@@ -15,21 +15,9 @@ CATEGORIES = {
     "RevistasModa": "https://capasjornais.pt/capas/RevistasModa.html",
 }
 
-# More browser-like headers
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-    "Referer": BASE_URL,
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-}
-
-# Use a session for all requests
-session = requests.Session()
-session.headers.update(HEADERS)
-
 def get_full_image(url):
     """Goes to the individual cover page and returns the link to the high-res image"""
-    resp = session.get(url)
+    resp = requests.get(url)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
     img = soup.find("img", class_="img-fluid")
@@ -41,7 +29,7 @@ def get_full_image(url):
     return None
 
 def fetch_covers(category, url):
-    resp = session.get(url)
+    resp = requests.get(url)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -93,7 +81,7 @@ def download_images(covers, category, base_dir="images"):
         if not os.path.exists(local_path):
             return True  # File does not exist, download
         try:
-            head = session.head(remote_url, timeout=10)
+            head = requests.head(remote_url, timeout=10)
             if head.status_code != 200:
                 return False  # Can't check, skip
             last_mod = head.headers.get("Last-Modified")
@@ -117,7 +105,7 @@ def download_images(covers, category, base_dir="images"):
             full_path = os.path.join(full_dir, fname)
             if should_download(cover['image_url'], full_path):
                 try:
-                    r = session.get(cover['image_url'])
+                    r = requests.get(cover['image_url'])
                     r.raise_for_status()
                     with open(full_path, "wb") as f:
                         f.write(r.content)
@@ -132,7 +120,7 @@ def download_images(covers, category, base_dir="images"):
             thumb_path = os.path.join(thumb_dir, fname)
             if should_download(cover['thumb_url'], thumb_path):
                 try:
-                    r = session.get(cover['thumb_url'])
+                    r = requests.get(cover['thumb_url'])
                     r.raise_for_status()
                     with open(thumb_path, "wb") as f:
                         f.write(r.content)
