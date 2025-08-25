@@ -1,4 +1,4 @@
-# Gazzetta Covers Scrapper
+# Project Gazzetta
 
 This project scrapes and downloads high-resolution covers and thumbnails from the website [capasjornais.pt](https://capasjornais.pt/), organizing them by category. It is designed to run automatically via GitHub Actions, committing new images to the repository.
 
