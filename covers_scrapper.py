@@ -55,12 +55,12 @@ def fetch_covers(category, url):
         if not thumb_url.startswith("http"):
             thumb_url = BASE_URL.rstrip("/") + "/" + thumb_url.lstrip("/")
 
-        # Página individual da capa
+        # Individual cover page
         detail_url = a_tag["href"]
         if not detail_url.startswith("http"):
             detail_url = BASE_URL.rstrip("/") + "/" + detail_url.lstrip("/")
 
-        # Vai buscar a imagem em alta resolução
+        # Fetch the high-resolution image
         full_img_url = get_full_image(detail_url)
 
         covers.append({
