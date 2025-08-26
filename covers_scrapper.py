@@ -101,6 +101,10 @@ def download_images(covers, category, base_dir="images"):
             print(f"    ! Error checking remote file {remote_url}: {e}")
             return False
 
+    # Track filenames for current run
+    current_full_filenames = set()
+    current_thumb_filenames = set()
+
     for cover in covers:
         safe_name = cover['name'].replace(" ", "_")
         fname = f"{safe_name}_{cover['date']}.jpg"
@@ -108,6 +112,7 @@ def download_images(covers, category, base_dir="images"):
         # Full cover
         if cover['image_url']:
             full_path = os.path.join(full_dir, fname)
+            current_full_filenames.add(fname)
             if should_download(cover['image_url'], full_path):
                 try:
                     r = requests.get(proxied_url(cover['image_url']))
@@ -123,6 +128,7 @@ def download_images(covers, category, base_dir="images"):
         # Thumbnail
         if cover['thumb_url']:
             thumb_path = os.path.join(thumb_dir, fname)
+            current_thumb_filenames.add(fname)
             if should_download(cover['thumb_url'], thumb_path):
                 try:
                     r = requests.get(proxied_url(cover['thumb_url']))
@@ -134,6 +140,24 @@ def download_images(covers, category, base_dir="images"):
                     print(f"  ! Error downloading {cover['thumb_url']}: {e}")
             else:
                 print(f"  • [THUMB] {thumb_path} (skipped)")
+
+    # Delete outdated images (covers)
+    for fname in os.listdir(full_dir):
+        if fname.endswith('.jpg') and fname not in current_full_filenames:
+            try:
+                os.remove(os.path.join(full_dir, fname))
+                print(f"  - [FULL] {os.path.join(full_dir, fname)} (deleted outdated)")
+            except Exception as e:
+                print(f"  ! Error deleting {os.path.join(full_dir, fname)}: {e}")
+
+    # Delete outdated images (thumbnails)
+    for fname in os.listdir(thumb_dir):
+        if fname.endswith('.jpg') and fname not in current_thumb_filenames:
+            try:
+                os.remove(os.path.join(thumb_dir, fname))
+                print(f"  - [THUMB] {os.path.join(thumb_dir, fname)} (deleted outdated)")
+            except Exception as e:
+                print(f"  ! Error deleting {os.path.join(thumb_dir, fname)}: {e}")
 
 def main():
     print("Collecting covers and thumbnails...\n")
